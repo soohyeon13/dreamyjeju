@@ -4,7 +4,9 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 class TrustAllHost {
-    public void httpsUrlConnection() {trustAllHost();}
+    public void httpsUrlConnection() {
+        trustAllHost();
+    }
 
     private void trustAllHost() {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -32,7 +34,5 @@ class TrustAllHost {
             }
 
         }};
-
-        //TODO logic
     }
 }

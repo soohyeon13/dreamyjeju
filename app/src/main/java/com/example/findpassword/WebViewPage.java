@@ -2,34 +2,59 @@ package com.example.findpassword;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.webkit.WebSettings;
+import android.view.KeyEvent;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
 
 public class WebViewPage extends AppCompatActivity {
 
-    private WebView webview;
-    private String htmlUrl = "http://elearning.jejunu.ac.kr/MMain.do?cmd=viewIndexPage";
-    private Button btn;
+    private WebView myWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webviewpage);
-        webview = findViewById(R.id.webView);
-        WebSettings mws = webview.getSettings();//Mobile Web Setting
-        mws.setJavaScriptEnabled(true);//자바스크립트 허용
-        mws.setLoadWithOverviewMode(true);
+        myWebView = findViewById(R.id.webView);
 
+        String id = getIntent().getStringExtra("ID");
+        String password = getIntent().getStringExtra("PW");
+        String url_Home = "https://elearning.jejunu.ac.kr/MMain.do?cmd=viewIndexPage";
+        String url_Login = "https://elearning.jejunu.ac.kr/MUser.do";
+        String url_Destination = "https://elearning.jejunu.ac.kr/MSmartatt.do?cmd=viewAttendCourseList";
+        String host = "elearning.jejunu.ac.kr";
+        String referer = "http://elearning.jejunu.ac.kr/MMain.do?cmd=viewIndexPage";
+        String origin = "http://elearning.jejunu.ac.kr";
+        String body = "cmd=loginUser&userDTO.userId=" + id + "&userDTO.password=" + password + "&userDTO.localeKey=ko";
 
-        webview.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+        WebViewPageSetting webViewPageSetting = new WebViewPageSetting(myWebView);
+        webViewPageSetting.setWebSettings();
+        webViewPageSetting.setWebChromeClient();
+        webViewPageSetting.setWebViewClient(this);
+
+        RequestHttpsUrlConnection requestHttpsUrlConnection = new RequestHttpsUrlConnection(myWebView,WebViewPage.this);
+        requestHttpsUrlConnection.setUrl_Home(url_Home);
+        requestHttpsUrlConnection.setUrl_Login(url_Login);
+        requestHttpsUrlConnection.setUrl_Destination(url_Destination);
+        requestHttpsUrlConnection.setHost(host);
+        requestHttpsUrlConnection.setReferer(referer);
+        requestHttpsUrlConnection.setOrigin(origin);
+        requestHttpsUrlConnection.setBody(body);
+        requestHttpsUrlConnection.execute(id,password);
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            if (myWebView.canGoBack()) {
+
+                myWebView.goBack();
+                return false;
+
             }
-        });
-        webview.loadUrl(htmlUrl);
+
+        }
+
+        return super.onKeyDown(keyCode, event);
+
     }
 }
