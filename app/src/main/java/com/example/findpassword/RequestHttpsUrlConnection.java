@@ -90,6 +90,7 @@ public class RequestHttpsUrlConnection {
                         return true;
                     }
                 });
+                conn = (HttpURLConnection) url.openConnection();
 
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);//write mode
@@ -118,6 +119,8 @@ public class RequestHttpsUrlConnection {
                         return true;
                     }
                 });
+                conn = (HttpURLConnection) url.openConnection();
+
                 conn.setRequestMethod("POST");
                 conn.setDoOutput(true);
                 conn.setDoInput(true);
