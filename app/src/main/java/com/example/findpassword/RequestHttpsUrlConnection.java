@@ -220,7 +220,7 @@ public class RequestHttpsUrlConnection {
             conn.setRequestProperty("Origin", origin);
             conn.setRequestProperty("Referer", referer);
             conn.setRequestProperty("Upgrade-Insecure-Requests", "1");
-            conn.setRequestProperty("User-Agent","Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.2)");
+            conn.setRequestProperty("User-Agent","Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Mobile Safari/537.36");
         }
     }
 }

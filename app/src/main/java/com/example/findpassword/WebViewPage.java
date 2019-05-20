@@ -3,11 +3,14 @@ package com.example.findpassword;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
 
 public class WebViewPage extends AppCompatActivity {
 
     private WebView myWebView;
+    private Button attendCodeBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,14 @@ public class WebViewPage extends AppCompatActivity {
         requestHttpsUrlConnection.setOrigin(origin);
         requestHttpsUrlConnection.setBody(body);
         requestHttpsUrlConnection.execute(id,password);
+
+        attendCodeBtn = (Button)findViewById(R.id.attPathCode);
+        attendCodeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
