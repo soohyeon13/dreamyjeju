@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 
 import java.io.IOException;
@@ -61,11 +60,11 @@ public class RequestHttpsUrlConnection {
     }
 
     public void execute(String id, String password) {
-        HttpsAsycTask httpsAsycTask = new HttpsAsycTask();
-        httpsAsycTask.execute(id, password);
+        HttpsAsyncTask httpsAsyncTask = new HttpsAsyncTask();
+        httpsAsyncTask.execute(id, password);
     }
 
-    private class HttpsAsycTask extends AsyncTask<String, Void, Void> {
+    private class HttpsAsyncTask extends AsyncTask<String, Void, Void> {
 
         private HttpURLConnection conn;
         private List<String> cookies;
@@ -81,8 +80,8 @@ public class RequestHttpsUrlConnection {
             Log.d("Password", "Password :" + strings[1]);
             try {
                 URL url = new URL(url_Home);
-                TrustAllHost trustAllHost = new TrustAllHost();
-                trustAllHost.httpsUrlConnection();
+                /*TrustAllHost trustAllHost = new TrustAllHost();
+                trustAllHost.httpsUrlConnection();*/
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
                 httpsURLConnection.setHostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -110,8 +109,8 @@ public class RequestHttpsUrlConnection {
 
             try {
                 URL url = new URL(url_Login);
-                TrustAllHost trustAllHost = new TrustAllHost();
-                trustAllHost.httpsUrlConnection();
+                /*TrustAllHost trustAllHost = new TrustAllHost();
+                trustAllHost.httpsUrlConnection();*/
                 HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
                 httpsURLConnection.setHostnameVerifier(new HostnameVerifier() {
                     @Override
@@ -134,7 +133,10 @@ public class RequestHttpsUrlConnection {
                 os.flush();
                 os.close();
 
+                Log.d("LOG",url+"로 HTTP 요청 전송");
+
                 if (conn.getResponseCode() != HttpsURLConnection.HTTP_OK) {
+                    Log.d("LOG", "HTTP_OK를 받지 못했습니다.");
                     return null;
                 }
 
@@ -148,20 +150,18 @@ public class RequestHttpsUrlConnection {
             return null;
         }
 
-
+        @Override
         protected void onPostExecute(Void aVoid) {
             if (LoginSuccess()) {
 
-                CookieSyncManager.createInstance(myWebView.getContext());
                 CookieManager cookieManager = CookieManager.getInstance();
                 cookieManager.setAcceptCookie(true);
                 cookieManager.removeAllCookie();
 
                 for (String cookie : cookies) {
-                    cookieManager.setCookie(url_Destination, cookie);
+                    cookieManager.getInstance().setCookie(url_Destination, cookie);
                 }
 
-                CookieSyncManager.getInstance().sync();
                 myWebView.loadUrl(url_Destination);
             } else {
                 AlertDialog dialog = null;
@@ -220,10 +220,7 @@ public class RequestHttpsUrlConnection {
             conn.setRequestProperty("Origin", origin);
             conn.setRequestProperty("Referer", referer);
             conn.setRequestProperty("Upgrade-Insecure-Requests", "1");
-            conn.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) "
-                            + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Mobile Safari/537.36");
-
+            conn.setRequestProperty("User-Agent","Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.2)");
         }
     }
 }

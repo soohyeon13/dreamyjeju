@@ -16,23 +16,28 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private EditText emailEdit;
-    private EditText passwordEdit;
-    private Button signbtn;
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-    private CheckBox autoLogin;
-    private boolean autoCheck;
-    private String signId;
-    private String signpassword;
+
+    Login login = new Login();
+
+
+    EditText emailEdit;
+    EditText passwordEdit;
+    Button signbtn;
+    SharedPreferences pref;
+    SharedPreferences.Editor editor;
+    CheckBox autoLogin;
+    Boolean autoCheck;
+    String idString;
+    String passwordString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        final Login login = new Login();
-
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo networkInfo =
+                connectivityManager.getActiveNetworkInfo();
         emailEdit = (EditText) findViewById(R.id.email);
         passwordEdit = (EditText) findViewById(R.id.password);
         signbtn = (Button) findViewById(R.id.email_sign_in_button);
@@ -42,28 +47,41 @@ public class MainActivity extends AppCompatActivity {
         editor = pref.edit();
 
         autoCheck = pref.getBoolean("autoCheck", false);
-
         signbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (login.isOnline(networkInfo)) {
+                    idString = emailEdit.getText().toString();
+                    passwordString = passwordEdit.getText().toString();
 
-                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-                if (login.isNetworkConnected(networkInfo)) {
-                    signId = emailEdit.getText().toString();
-                    signpassword = passwordEdit.getText().toString();
-                    if (login.setAutoLogin(signId, signpassword, autoLogin, editor, MainActivity.this)) {
+                    if (login.setAutoLogin(idString, passwordString, autoLogin, editor, MainActivity.this)) {
                         Intent intent = new Intent(MainActivity.this, WebViewPage.class);
-                        intent.putExtra("id", signId);
-                        intent.putExtra("password", signpassword);
+                        intent.putExtra("ID", idString);
+                        intent.putExtra("PW", passwordString);
                         startActivity(intent);
                     }
-                }else {
-                    Toast.makeText(MainActivity.this,"네트워크 상태 체크",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "연결확인", Toast.LENGTH_SHORT).show();
                 }
             }
         });
+        if (autoCheck) {
+            if (login.getAutoLogin(idString, passwordString, MainActivity.this)) {
+                emailEdit.setText(idString);
+                passwordEdit.setText(passwordString);
+                autoLogin.setChecked(true);
+                if (login.isOnline(networkInfo)) {
+                    Intent intent = new Intent(MainActivity.this, WebViewPage.class);
+                    intent.putExtra("ID", idString);
+                    intent.putExtra("PASSWORD", passwordString);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "연결확인", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+        }
     }
 }
 
